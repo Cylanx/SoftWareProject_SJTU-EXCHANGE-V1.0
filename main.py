@@ -1,3 +1,5 @@
+#Copyright by Cylanx
+#This program designed to SJTU class SoftWare
 # -*- coding: utf-8 -*-
 
 from tkinter import *
