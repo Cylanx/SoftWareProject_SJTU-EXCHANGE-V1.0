@@ -8,9 +8,9 @@ import pickle
 import os
 import pstats
 
-LOG_LINE_NUM = 0
-ITEM_DICT = dict()
-file_path = os.path.join(os.path.dirname(__file__), 'Item_Data.txt')
+LOG_LINE_NUM = 0        #用于记录窗口操作记录的行数
+ITEM_DICT = dict()      #用于本地保存数据，数据类型dict以便添加各种属性
+file_path = os.path.join(os.path.dirname(__file__), 'Item_Data.txt')    #本地数据保存在根目录下的txt文件中
 if os.path.exists(file_path):
     ITEM_DICT = pickle.load(open(file_path, 'rb'))
 
@@ -51,7 +51,7 @@ class MY_GUI():
 
         self.log_data_Text = Text(self.init_window_name, width=65, height=9)  # 日志框
         self.log_data_Text.grid(row=14, column=0, columnspan=10)
-        #按钮
+        #按钮,点击之后调用相应函数
         self.add_button = Button(self.init_window_name, text="添加物品", bg="lightblue", width=10,command=self.add_item)  # 调用内部方法  加()为直接调用
         self.add_button.grid(row=1, column=11)
 
@@ -82,7 +82,7 @@ class MY_GUI():
         else:
             self.log_data_Text.delete(1.0,2.0)
             self.log_data_Text.insert(END, logmsg_in)
-
+    #添加物品子程序
     def add_item(self):
         item_name = self.input_data_Text.get(1.0, END).strip().replace("\n", "")
         item_info = self.input_info_Text.get(1.0, END).strip().replace("\n", "")
@@ -93,7 +93,7 @@ class MY_GUI():
         self.input_info_Text.delete(1.0, END)
         self.output_info_Text.delete(1.0, END)
         self.save()
-
+    #删除物品子程序
     def delete_item(self):
         item_name = self.input_data_Text.get(1.0, END).strip().replace("\n", "")
         del ITEM_DICT[item_name]
@@ -103,12 +103,12 @@ class MY_GUI():
         self.input_info_Text.delete(1.0, END)
         self.output_info_Text.delete(1.0, END)
         self.save()
-
+    #展示物品子程序
     def show_item(self):
         self.output_data_Text.delete(1.0, END)
         self.output_info_Text.delete(1.0, END)
         self.output_data_Text.insert(1.0, ''.join(["|" + item_name + "|" for item_name in ITEM_DICT.keys()]))
-
+    #搜索物品子程序
     def search_item(self):
         item_name = self.input_data_Text.get(1.0, END).strip().replace("\n", "")
         Finding = 1 if item_name in ITEM_DICT.keys() else -1
@@ -124,11 +124,11 @@ class MY_GUI():
             self.output_info_Text.delete(1.0, END)
             self.output_info_Text.insert(1.0, ITEM_DICT[item_name])
             self.write_log_to_Text("INFO:Successfully Find The Item")
-
+    #存储数据到本地子程序
     def save(self):
         with open(file_path, 'wb') as f:
             pickle.dump(ITEM_DICT, f)
-
+    #关闭窗口询问
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.init_window_name.destroy()
@@ -141,8 +141,8 @@ def gui_start():
     init_window.protocol('WM_DELETE_WINDOW', PORTAL.on_closing)
     init_window.mainloop()
 
+#以下为选择执行程序还是查看程序测试的统计数据
 MODE = "exec"
-
 if MODE == "test":
     profile.run("gui_start()",'mystats')
     p = pstats.Stats('mystats')
